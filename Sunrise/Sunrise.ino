@@ -15,9 +15,9 @@ struct KeyFrame
 
 //red, green, blue
 struct KeyFrame start = {RgbColor(0,0,0),0};
-struct KeyFrame frame1 = {RgbColor(100,0,0),1000};
-struct KeyFrame frame2 = {RgbColor(0,150,0),4000};
-struct KeyFrame endFrame = {RgbColor(0,0,35),7000};
+struct KeyFrame frame1 = {RgbColor(0,0,35),1000};
+struct KeyFrame frame2 = {RgbColor(0,200,0),4000};
+struct KeyFrame endFrame = {RgbColor(40,40,40),7000};
 
 void updateBoard(RgbColor colorToSet){
     for (uint16_t i = 0; i < PixelCount; i += 1)
@@ -57,13 +57,15 @@ void loop() {
   }
   else if(currentTime<frame2.targetTime){
     long millisSinceLastFrameSwitch = currentTime - frame1.targetTime;
-    float progress = ((float)millisSinceLastFrameSwitch/(float)frame2.targetTime);
+    long elapsedTimeBetweenFrames = frame2.targetTime-frame1.targetTime;
+    float progress = ((float)millisSinceLastFrameSwitch/(float)(elapsedTimeBetweenFrames));
     toSet = RgbColor::LinearBlend(frame1.color, frame2.color, progress);
     
   }
   else if(currentTime<endFrame.targetTime){
     long millisSinceLastFrameSwitch = currentTime - frame2.targetTime;
-    float progress = ((float)millisSinceLastFrameSwitch/(float)endFrame.targetTime);
+    long elapsedTimeBetweenFrames = endFrame.targetTime-frame2.targetTime;
+    float progress = ((float)millisSinceLastFrameSwitch/(float)(elapsedTimeBetweenFrames));
     toSet = RgbColor::LinearBlend(frame2.color, endFrame.color, progress);
   }
   else{
