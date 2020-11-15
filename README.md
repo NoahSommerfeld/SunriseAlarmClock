@@ -6,6 +6,8 @@ This project uses Ben's custom-designed LED board, which is a single board combi
 
 # Software
 Software used is Arduino-IDE written C++ code. ADD DETAILS ON CODE ARCH. HERE
+Dependency
+-NeoPixelBus library (documentaiton: https://github.com/Makuna/NeoPixelBus/wiki )
 
 # Setup
 1. Set up the board connected to Power with a barrel-jack power adapter, and the PC via a data-capable microUSB-USB cable
