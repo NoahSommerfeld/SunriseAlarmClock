@@ -1,0 +1,5 @@
+TODO
+-define a spectrum and update loop
+	-add better key frames and colors
+-add timing and scheduling
+-add RTC checking 
