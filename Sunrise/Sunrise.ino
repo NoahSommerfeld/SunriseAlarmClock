@@ -13,7 +13,17 @@ struct KeyFrame
     long targetTime; //elapsed time (in millis) that this frame should be 100%
 };
 
-//red, green, blue
+const int numOfSunriseKeyFrames = 7;
+struct KeyFrame sunriseArray[numOfSunriseKeyFrames]={
+  {RgbColor(0,0,0),0}, //start black
+  {RgbColor(5,0,20),3000}, //fade up to dark purple
+  {RgbColor(63,22,24),8000},// move to pink
+  {RgbColor(125,62,5),12000}, //strong orange
+  {RgbColor(255,234,108),16000},//yellow of the morning
+  {RgbColor(255,255,170),20000}, //full bright (with yellow tinge)
+  {RgbColor(30,30,30),29000}, //fade out
+};
+
 struct KeyFrame start = {RgbColor(0,0,0),0};
 struct KeyFrame frame1 = {RgbColor(0,0,35),1000};
 struct KeyFrame frame2 = {RgbColor(0,200,0),4000};
@@ -28,8 +38,25 @@ void updateBoard(RgbColor colorToSet){
    strip.Show();
 }
 
-void setup() {
+RgbColor pickColorToSet(KeyFrame frameArray[], long elapsedTime){
+  if(elapsedTime<frameArray[0].targetTime){
+    return RgbColor::LinearBlend(RgbColor(0,0,0), frameArray[0].color, float(frameArray[0].targetTime/(float)elapsedTime)); //fade in first frame from black
+  }
   
+  for(int i=1; i<numOfSunriseKeyFrames; i++){
+   if(elapsedTime<frameArray[i].targetTime){
+    long millisSinceLastFrameSwitch = elapsedTime - frameArray[i-1].targetTime;
+    long elapsedTimeBetweenFrames = frameArray[i].targetTime-frameArray[i-1].targetTime;
+    float progress = ((float)millisSinceLastFrameSwitch/(float)(elapsedTimeBetweenFrames));
+    return RgbColor::LinearBlend(frameArray[i-1].color, frameArray[i].color, progress);
+   }
+  }
+  return RgbColor(0,0,0); //return black/off
+}
+
+void setup() {
+  sunriseArray[0].color = RgbColor(0,0,0);
+
     Serial.begin(115200);
     while (!Serial); // wait for serial attach
 
@@ -44,34 +71,11 @@ void setup() {
 
     Serial.println();
     Serial.println("Running...");
-
+    //pickColorToSet(sunriseArray, millis());
 }
 
 void loop() {
+  
   // put your main code here, to run repeatedly:
-  long currentTime = millis();
-  RgbColor toSet;
-  if(currentTime<frame1.targetTime){
-    float progress = ((float)currentTime/(float)frame1.targetTime); //will be at 100% when elapsed time reaches frame1's targettime
-    toSet = RgbColor::LinearBlend(start.color, frame1.color, progress);
-  }
-  else if(currentTime<frame2.targetTime){
-    long millisSinceLastFrameSwitch = currentTime - frame1.targetTime;
-    long elapsedTimeBetweenFrames = frame2.targetTime-frame1.targetTime;
-    float progress = ((float)millisSinceLastFrameSwitch/(float)(elapsedTimeBetweenFrames));
-    toSet = RgbColor::LinearBlend(frame1.color, frame2.color, progress);
-    
-  }
-  else if(currentTime<endFrame.targetTime){
-    long millisSinceLastFrameSwitch = currentTime - frame2.targetTime;
-    long elapsedTimeBetweenFrames = endFrame.targetTime-frame2.targetTime;
-    float progress = ((float)millisSinceLastFrameSwitch/(float)(elapsedTimeBetweenFrames));
-    toSet = RgbColor::LinearBlend(frame2.color, endFrame.color, progress);
-  }
-  else{
-    toSet = endFrame.color;
-  }
-
-  updateBoard(toSet);
-  delay(50); // avoid hammering the board
+  updateBoard(pickColorToSet(sunriseArray,millis()));
 }
