@@ -139,6 +139,6 @@ void loop()
     //strip.SetPixelColor(3, RgbwColor(colorSaturation));
     strip.Show();
 
-    delay(5000);
+    delay(2000);
 
 }
