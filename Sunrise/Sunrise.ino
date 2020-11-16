@@ -1,5 +1,21 @@
+#include <NTPClient.h>
+// change next line to use with another board/shield
+#include <ESP8266WiFi.h>
+//#include <WiFi.h> // for WiFi shield
+//#include <WiFi101.h> // for WiFi 101 shield or MKR1000
+#include <WiFiUdp.h>
+
 #include <NeoPixelBus.h>
 #include <NeoPixelAnimator.h>
+
+const char *ssid     = "Charterfelds";
+const char *password = "855VancouverStreet";
+
+WiFiUDP ntpUDP;
+
+// By default 'pool.ntp.org' is used with 60 seconds cache update interval and
+// no timezone offset
+NTPClient timeClient(ntpUDP);
 
 const uint16_t PixelCount = 46; // the number of pixeles in the strip
 
@@ -55,8 +71,7 @@ RgbColor pickColorToSet(KeyFrame frameArray[], long elapsedTime){
 }
 
 void setup() {
-  sunriseArray[0].color = RgbColor(0,0,0);
-
+//****** set up Serial ************
     Serial.begin(115200);
     while (!Serial); // wait for serial attach
 
@@ -64,18 +79,28 @@ void setup() {
     Serial.println("Initializing...");
     Serial.flush();
 
-    // this resets all the neopixels to an off state
+//****** set up wifi and NTP ************
+    WiFi.begin(ssid, password);
+
+    while ( WiFi.status() != WL_CONNECTED ) {
+      delay ( 500 );
+      Serial.print ( "." );
+    }
+    timeClient.begin();
+
+//****** set board; resets all the neopixels to an off state  ************
     strip.Begin();
     strip.Show();
 
-
     Serial.println();
     Serial.println("Running...");
-    //pickColorToSet(sunriseArray, millis());
+
 }
 
 void loop() {
-  
+  timeClient.update(); //uses cache time specified in constructor
+  Serial.println(timeClient.getFormattedTime());
+
   // put your main code here, to run repeatedly:
   updateBoard(pickColorToSet(sunriseArray,millis()));
 }
