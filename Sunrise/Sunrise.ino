@@ -39,12 +39,12 @@ struct KeyFrame
 const int numOfSunriseKeyFrames = 7;
 struct KeyFrame sunriseArray[numOfSunriseKeyFrames]={
   {RgbColor(0,0,0),1}, //start black
-  {RgbColor(15,0,10),10000}, //fade up to dark red over a minute
-  {RgbColor(110,49,0),900000},// dark orange
-  {RgbColor(156,95,1), 1800000}, //strong orange
-  {RgbColor(239,150,1),2700000},//move towards yellow
-  {RgbColor(255,200,100),3600000}, //full bright (with yellow tinge)
-  {RgbColor(30,30,10),4500000}, //fade out
+  {RgbColor(15,0,10),100}, //fade up to dark red over a minute
+  {RgbColor(110,49,0),900},// dark orange
+  {RgbColor(156,95,1), 1800}, //strong orange
+  {RgbColor(239,150,1),2700},//move towards yellow
+  {RgbColor(255,200,100),3600}, //full bright (with yellow tinge)
+  {RgbColor(30,30,10),4500}, //fade out
 };
 // 1 hr is 3,600,000 milliseconds
 struct KeyFrame start = {RgbColor(0,0,0),0};
@@ -117,14 +117,16 @@ void loop() {
  //update time twice a day
   if(String(hour()).equals("5") && String(minute()).equals("30")){
      timeClient.update(); //uses cache time specified in constructor so won't hammer. 
+     setTime(timeClient.getEpochTime());
   }
   if(String(hour()).equals("20") && String(minute()).equals("30")){
      timeClient.update(); //uses cache time specified in constructor so won't hammer. 
+     setTime(timeClient.getEpochTime());
   }
   if(String(hour()).equals("6") && String(minute()).equals("30")){
     startTime = timeClient.getEpochTime(); //start the sunrise sequence
   }
 
   // put your main code here, to run repeatedly:
-  updateBoard(pickColorToSet(sunriseArray,(timeClient.getEpochTime()-startTime)*1000));
+  updateBoard(pickColorToSet(sunriseArray,(timeClient.getEpochTime()-startTime)));
 }
