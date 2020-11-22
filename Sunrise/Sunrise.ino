@@ -40,11 +40,11 @@ const int numOfSunriseKeyFrames = 7;
 struct KeyFrame sunriseArray[numOfSunriseKeyFrames]={
   {RgbColor(0,0,0),1}, //start black
   {RgbColor(15,0,10),10000}, //fade up to dark red over a minute
-  {RgbColor(110,49,0),90000},// dark orange
-  {RgbColor(156,95,1), 180000}, //strong orange
-  {RgbColor(239,150,1),270000},//move towards yellow
-  {RgbColor(255,200,100),360000}, //full bright (with yellow tinge)
-  {RgbColor(30,30,10),450000}, //fade out
+  {RgbColor(110,49,0),900000},// dark orange
+  {RgbColor(156,95,1), 1800000}, //strong orange
+  {RgbColor(239,150,1),2700000},//move towards yellow
+  {RgbColor(255,200,100),3600000}, //full bright (with yellow tinge)
+  {RgbColor(30,30,10),4500000}, //fade out
 };
 // 1 hr is 3,600,000 milliseconds
 struct KeyFrame start = {RgbColor(0,0,0),0};
