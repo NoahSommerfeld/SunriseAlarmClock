@@ -9,9 +9,11 @@ Software used is Arduino-IDE written C++ code. ADD DETAILS ON CODE ARCH. HERE
 Dependencies:
 -NeoPixelBus library (documentaiton: https://github.com/Makuna/NeoPixelBus/wiki )
 -NTP client (https://github.com/arduino-libraries/NTPClient) which references the board-stock wifi libraries
+-Arduino time library (https://playground.arduino.cc/Code/Time/)
 
 #Domain
 Specturm and timeline used from https://www.cambridgeincolour.com/tutorials/sunrise-sunset-calculator.htm
+A snippet of the day spectrum was converted into MS Paint and pixels were sampled every 100 pixels (see the 'documentation' folder). Brightness on the spectrum scale was manually adjusted for each pixel. 
 
 # Setup
 1. Set up the board connected to Power with a barrel-jack power adapter, and the PC via a data-capable microUSB-USB cable
