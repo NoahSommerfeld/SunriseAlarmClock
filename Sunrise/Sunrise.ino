@@ -38,9 +38,9 @@ struct KeyFrame
 
 const int numOfSunriseKeyFrames = 7;
 struct KeyFrame sunriseArray[numOfSunriseKeyFrames]={
-  {RgbColor(0,0,0),1}, //start black
+  {RgbColor(0,0,0),0}, //start black
   {RgbColor(15,0,10),100}, //fade up to dark red over a minute
-  {RgbColor(110,49,0),900},// dark orange
+  {RgbColor(100,35,0),900},// dark orange
   {RgbColor(156,95,1), 1800}, //strong orange
   {RgbColor(239,150,1),2700},//move towards yellow
   {RgbColor(255,200,100),3600}, //full bright (with yellow tinge)
@@ -62,6 +62,9 @@ void updateBoard(RgbColor colorToSet){
 }
 
 RgbColor pickColorToSet(KeyFrame frameArray[], long elapsedTime){
+  if(elapsedTime<1){
+    elapsedTime = 1; //to stop divide-by-zero errors
+  }
   if(elapsedTime<frameArray[0].targetTime){
     return RgbColor::LinearBlend(RgbColor(0,0,0), frameArray[0].color, float(frameArray[0].targetTime/(float)elapsedTime)); //fade in first frame from black
   }
@@ -123,7 +126,7 @@ void loop() {
      timeClient.update(); //uses cache time specified in constructor so won't hammer. 
      setTime(timeClient.getEpochTime());
   }
-  if(String(hour()).equals("6") && String(minute()).equals("30")){
+  if(String(hour()).equals("8") && String(minute()).equals("45")){
     startTime = timeClient.getEpochTime(); //start the sunrise sequence
   }
 
