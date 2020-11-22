@@ -1,3 +1,6 @@
+#include <Time.h>
+#include <TimeLib.h>
+
 #include <NTPClient.h>
 // change next line to use with another board/shield
 #include <ESP8266WiFi.h>
@@ -15,10 +18,14 @@ WiFiUDP ntpUDP;
 
 // By default 'pool.ntp.org' is used with 60 seconds cache update interval and
 // no timezone offset
-NTPClient timeClient(ntpUDP);
+//NTPClient timeClient(ntpUDP);
+
+// You can specify the time server pool and the offset, (in seconds)
+// additionaly you can specify the update interval (in milliseconds).
+NTPClient timeClient(ntpUDP, "pool.ntp.org", -28800, 60000);
 
 const uint16_t PixelCount = 46; // the number of pixeles in the strip
-
+long startTime =0;
 NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip(PixelCount);
 
 // what is stored for state is specific to the need, in this case, the colors.
@@ -31,8 +38,8 @@ struct KeyFrame
 
 const int numOfSunriseKeyFrames = 7;
 struct KeyFrame sunriseArray[numOfSunriseKeyFrames]={
-  {RgbColor(0,0,0),0}, //start black
-  {RgbColor(85,0,10),6000}, //fade up to dark red over a minute
+  {RgbColor(0,0,0),1}, //start black
+  {RgbColor(15,0,10),10000}, //fade up to dark red over a minute
   {RgbColor(110,49,0),90000},// dark orange
   {RgbColor(156,95,1), 180000}, //strong orange
   {RgbColor(239,150,1),270000},//move towards yellow
@@ -67,7 +74,7 @@ RgbColor pickColorToSet(KeyFrame frameArray[], long elapsedTime){
     return RgbColor::LinearBlend(frameArray[i-1].color, frameArray[i].color, progress);
    }
   }
-  return RgbColor(0,0,0); //return black/off
+  return RgbColor(0,0,0); //return black/off when elapsed time is over the last frame target
 }
 
 void setup() {
@@ -87,7 +94,7 @@ void setup() {
       Serial.print ( "." );
     }
     timeClient.begin();
-
+    timeClient.update();
 //****** set board; resets all the neopixels to an off state  ************
     strip.Begin();
     strip.Show();
@@ -95,12 +102,29 @@ void setup() {
     Serial.println();
     Serial.println("Running...");
 
+    delay(2000);
+    startTime = 0; //will force sunrise default to last frame
+    Serial.println(startTime);
+    Serial.println(timeClient.getFormattedTime());
+    setTime(timeClient.getEpochTime());
+    Serial.println("time lib: "+String(hour())+" "+String(minute())+" "+String(second()));
 }
 
+
+
 void loop() {
-  timeClient.update(); //uses cache time specified in constructor
-  Serial.println(timeClient.getFormattedTime());
+
+ //update time twice a day
+  if(String(hour()).equals("5") && String(minute()).equals("30")){
+     timeClient.update(); //uses cache time specified in constructor so won't hammer. 
+  }
+  if(String(hour()).equals("20") && String(minute()).equals("30")){
+     timeClient.update(); //uses cache time specified in constructor so won't hammer. 
+  }
+  if(String(hour()).equals("6") && String(minute()).equals("30")){
+    startTime = timeClient.getEpochTime(); //start the sunrise sequence
+  }
 
   // put your main code here, to run repeatedly:
-  updateBoard(pickColorToSet(sunriseArray,millis()));
+  updateBoard(pickColorToSet(sunriseArray,(timeClient.getEpochTime()-startTime)*1000));
 }
