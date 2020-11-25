@@ -40,8 +40,8 @@ const int numOfSunriseKeyFrames = 7;
 struct KeyFrame sunriseArray[numOfSunriseKeyFrames]={
   {RgbColor(0,0,0),0}, //start black
   {RgbColor(15,0,10),100}, //fade up to dark red over a minute
-  {RgbColor(35,5,0),900},// dark orange
-  {RgbColor(90,35,1), 1800}, //strong orange
+  {RgbColor(40,15,0),900},// dark orange
+  {RgbColor(90,45,1), 1800}, //strong orange
   {RgbColor(150,90,1),2700},//move towards yellow
   {RgbColor(255,200,100),3600}, //full bright (with yellow tinge)
   {RgbColor(30,30,10),4500}, //fade out
@@ -126,7 +126,7 @@ void loop() {
      timeClient.update(); //uses cache time specified in constructor so won't hammer. 
      setTime(timeClient.getEpochTime());
   }
-  if(String(hour()).equals("6") && String(minute()).equals("1")){
+  if(String(hour()).equals("5") && String(minute()).equals("50")){
     startTime = timeClient.getEpochTime(); //start the sunrise sequence
   }
 
