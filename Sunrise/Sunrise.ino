@@ -1,42 +1,42 @@
 #include <Time.h>
 #include <TimeLib.h>
 #include "Config.h" //password and time values in local folder
-
 #include <NTPClient.h>
-// change next line to use with another board/shield
 #include <ESP8266WiFi.h>
 //#include <WiFi.h> // for WiFi shield
-//#include <WiFi101.h> // for WiFi 101 shield or MKR1000
 #include <WiFiUdp.h>
-
 #include <NeoPixelBus.h>
 #include <NeoPixelAnimator.h>
 
-const char *ssid     = CONFIG_WIFI_SSID;
-const char *password = CONFIG_WIFI_PASSWORD;
 
+//************ GLOBAL VALUES ********************
+//Wifi values
+const char *ssid     = CONFIG_WIFI_SSID; //pulled from Config file - update to your implementation
+const char *password = CONFIG_WIFI_PASSWORD;
 WiFiUDP ntpUDP;
 
-// By default 'pool.ntp.org' is used with 60 seconds cache update interval and
+// Sets the time server pool and the offset, (in seconds) and you can specify the update interval (in milliseconds).
+NTPClient timeClient(ntpUDP, "pool.ntp.org", -28800, 60000); //offset value is Pacific Winter time
+
+// Alternatively you can use the default settings )'pool.ntp.org' is used, with 60 seconds cache update interval, and
 // no timezone offset
 //NTPClient timeClient(ntpUDP);
 
-// You can specify the time server pool and the offset, (in seconds)
-// additionaly you can specify the update interval (in milliseconds).
-NTPClient timeClient(ntpUDP, "pool.ntp.org", -28800, 60000);
-
+//Board values
 const uint16_t PixelCount = 46; // the number of pixeles in the strip
-long startTime =0;
 NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip(PixelCount);
 
-// what is stored for state is specific to the need, in this case, the colors.
+// The struct represents a color at a point in time
 // Basically what ever you need inside the animation update function
 struct KeyFrame
 {
     RgbColor color;
-    long targetTime; //elapsed time (in millis) that this frame should be 100%
+    long targetTime; //when (time measured in elapsed seconds)that the frame's color will be shown exactly on the board
 };
 
+long startedTime =0; //the UNIX timestamp at which the sequence began (i.e sunrise)
+
+//The following array represents the sunrise sequence
 const int numOfSunriseKeyFrames = 7;
 struct KeyFrame sunriseArray[numOfSunriseKeyFrames]={
   {RgbColor(0,0,0),0}, //start black
@@ -47,12 +47,12 @@ struct KeyFrame sunriseArray[numOfSunriseKeyFrames]={
   {RgbColor(255,200,100),3600}, //full bright (with yellow tinge)
   {RgbColor(30,30,10),4500}, //fade out
 };
-// 1 hr is 3,600,000 milliseconds
-struct KeyFrame start = {RgbColor(0,0,0),0};
-struct KeyFrame frame1 = {RgbColor(0,0,35),1000};
-struct KeyFrame frame2 = {RgbColor(0,200,0),4000};
-struct KeyFrame endFrame = {RgbColor(40,40,40),7000};
+// 1 hr is 3,600 seconds, and 900 seconds is 15 minutes. 
 
+
+
+//**************METHODS ***********************
+//Applies the specified color to the board
 void updateBoard(RgbColor colorToSet){
     for (uint16_t i = 0; i < PixelCount; i += 1)
         {
@@ -62,12 +62,13 @@ void updateBoard(RgbColor colorToSet){
    strip.Show();
 }
 
+//Returns the calculated color to display, given the target array and elapsed time (linear progression)
 RgbColor pickColorToSet(KeyFrame frameArray[], long elapsedTime){
   if(elapsedTime<1){
     elapsedTime = 1; //to stop divide-by-zero errors
   }
-  if(elapsedTime<frameArray[0].targetTime){
-    return RgbColor::LinearBlend(RgbColor(0,0,0), frameArray[0].color, float(frameArray[0].targetTime/(float)elapsedTime)); //fade in first frame from black
+  if(elapsedTime<frameArray[0].targetTime){ //if the time for the first frame hasn't arrived yet
+    return RgbColor::LinearBlend(RgbColor(0,0,0), frameArray[0].color, float(frameArray[0].targetTime/(float)elapsedTime)); //fade in first frame from black (off)
   }
   
   for(int i=1; i<numOfSunriseKeyFrames; i++){
@@ -78,11 +79,12 @@ RgbColor pickColorToSet(KeyFrame frameArray[], long elapsedTime){
     return RgbColor::LinearBlend(frameArray[i-1].color, frameArray[i].color, progress);
    }
   }
-  return RgbColor(0,0,0); //return black/off when elapsed time is over the last frame target
+  
+  return RgbColor(0,0,0); //return black (off) when elapsed time is over the last frame target
 }
 
 void setup() {
-//****** set up Serial ************
+// set up Serial
     Serial.begin(115200);
     while (!Serial); // wait for serial attach
 
@@ -90,16 +92,17 @@ void setup() {
     Serial.println("Initializing...");
     Serial.flush();
 
-//****** set up wifi and NTP ************
+//set up wifi and NTP
     WiFi.begin(ssid, password);
 
-    while ( WiFi.status() != WL_CONNECTED ) {
+    while ( WiFi.status() != WL_CONNECTED ) { 
       delay ( 500 );
       Serial.print ( "." );
     }
     timeClient.begin();
     timeClient.update();
-//****** set board; resets all the neopixels to an off state  ************
+    
+// set board; resets all the neopixels to an off state 
     strip.Begin();
     strip.Show();
 
@@ -107,8 +110,8 @@ void setup() {
     Serial.println("Running...");
 
     delay(2000);
-    startTime = 0; //will force sunrise default to last frame
-    Serial.println(startTime);
+    startedTime = 0; //will set the elapsed time to be so long (>24 hours) that the board will be over the last frame and black (off)
+    Serial.println(startedTime);
     Serial.println(timeClient.getFormattedTime());
     setTime(timeClient.getEpochTime());
     Serial.println("time lib: "+String(hour())+" "+String(minute())+" "+String(second()));
@@ -118,7 +121,7 @@ void setup() {
 
 void loop() {
 
- //update time twice a day
+ //sync time twice a day. Could add an error indicator (make board go full red?)
   if(String(hour()).equals("5") && String(minute()).equals("30")){
      timeClient.update(); //uses cache time specified in constructor so won't hammer. 
      setTime(timeClient.getEpochTime());
@@ -127,10 +130,12 @@ void loop() {
      timeClient.update(); //uses cache time specified in constructor so won't hammer. 
      setTime(timeClient.getEpochTime());
   }
+
+  //Set the 'started time' to current time (which resets the elapsed time to 0 and starts the sequence)
   if(String(hour()).equals(CONFIG_SUNRISE_START_HOUR) && String(minute()).equals(CONFIG_SUNRISE_START_MINUTE)){
-    startTime = timeClient.getEpochTime(); //start the sunrise sequence
+    startedTime = timeClient.getEpochTime(); //start the sunrise sequence
   }
 
-  // put your main code here, to run repeatedly:
-  updateBoard(pickColorToSet(sunriseArray,(timeClient.getEpochTime()-startTime)));
+  // THIS IS THE KEY LINE - for each iteration, set the board to be the next color in the sequence (determined by elapsed time since StartedTime)
+  updateBoard(pickColorToSet(sunriseArray,(timeClient.getEpochTime()-startedTime)));
 }
