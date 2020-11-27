@@ -1,13 +1,13 @@
 # SunriseAlarmClock
-The Sunrise Alarm Clock project is designed to create a mood-lighting solution that simulates sunrise and sunset using internet-connected, Arduino-compatible LED boards. It gets bright enough to awaken around the 15 minute mark, reaches full daylight at 1 hr, and fades off 15 minutes after that. 
+The Sunrise Alarm Clock project is designed to create a mood-lighting solution that simulates sunrise and sunset using internet-connected, Arduino-compatible LED boards. It gets bright enough to awaken around the 15 minute mark, reaches full daylight at 1 hour, and fades off about 15 minutes after that. 
 
 # Setup
 1. Set up the board connected to Power with a barrel-jack power adapter, and the PC via a data-capable microUSB-USB cable
 2. In the Arduino IDE, add in the NODEMCU ESP8266 board as a compatible board https://www.instructables.com/Steps-to-Setup-Arduino-IDE-for-NODEMCU-ESP8266-WiF/
 3. Add in the depedency libraries (neopixelbus, NTPclient) library via Arduino library manager
 4. Clone the repository and open in Arduino IDE
-5. Make a copy of config-template.h in the Sunrise folder, rename to just 'config', and define the values (i.e wifi password, wake time, etc)
-6. upload Sunrise\Sunrise.ino to the board
+5. Make a copy of config-template.h in the Sunrise folder, rename to just 'config.h', and define the values (i.e wifi password, wake time, etc)
+6. Upload Sunrise\Sunrise.ino to the board
 
 # Hardware
 This project uses Ben's custom-designed LED board, which is a single board combining the open-source, Arduino IDE compatible NODEMCU ESP8266 microcontroller with a neopixelbus-compatible array of RGB LEDs
@@ -19,6 +19,6 @@ Dependencies:
 -NTP client (https://github.com/arduino-libraries/NTPClient) which references the board-stock wifi libraries
 -Arduino time library (https://playground.arduino.cc/Code/Time/)
 
-#Domain
+# Domain
 Specturm and timeline used from https://www.cambridgeincolour.com/tutorials/sunrise-sunset-calculator.htm
-A snippet of the day spectrum was converted into MS Paint and pixels were sampled every 100 pixels (see the 'documentation' folder). Brightness on the spectrum scale was manually adjusted for each pixel. 
+A snippet of the day spectrum was converted into MS Paint and pixels were sampled every 100 pixels (see the 'documentation' folder). Brightness on the spectrum scale was manually adjusted for each selection, but approximates a perceived linear ramp in brightness. 
