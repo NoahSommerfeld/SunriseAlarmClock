@@ -1,4 +1,0 @@
-TODO
--define a spectrum and update loop - done
--add timing and scheduling
--add NTP checking - done
