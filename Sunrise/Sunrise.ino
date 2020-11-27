@@ -1,5 +1,6 @@
 #include <Time.h>
 #include <TimeLib.h>
+#include "Config.h" //password and time values in local folder
 
 #include <NTPClient.h>
 // change next line to use with another board/shield
@@ -11,8 +12,8 @@
 #include <NeoPixelBus.h>
 #include <NeoPixelAnimator.h>
 
-const char *ssid     = "Charterfelds";
-const char *password = "855VancouverStreet";
+const char *ssid     = CONFIG_WIFI_SSID;
+const char *password = CONFIG_WIFI_PASSWORD;
 
 WiFiUDP ntpUDP;
 
@@ -40,8 +41,8 @@ const int numOfSunriseKeyFrames = 7;
 struct KeyFrame sunriseArray[numOfSunriseKeyFrames]={
   {RgbColor(0,0,0),0}, //start black
   {RgbColor(15,0,10),100}, //fade up to dark red over a minute
-  {RgbColor(40,15,0),900},// dark orange
-  {RgbColor(90,45,1), 1800}, //strong orange
+  {RgbColor(45,40,0),900},// dark orange
+  {RgbColor(90,65,1), 1800}, //strong orange
   {RgbColor(150,90,1),2700},//move towards yellow
   {RgbColor(255,200,100),3600}, //full bright (with yellow tinge)
   {RgbColor(30,30,10),4500}, //fade out
@@ -126,7 +127,7 @@ void loop() {
      timeClient.update(); //uses cache time specified in constructor so won't hammer. 
      setTime(timeClient.getEpochTime());
   }
-  if(String(hour()).equals("5") && String(minute()).equals("50")){
+  if(String(hour()).equals(CONFIG_SUNRISE_START_HOUR) && String(minute()).equals(CONFIG_SUNRISE_START_MINUTE)){
     startTime = timeClient.getEpochTime(); //start the sunrise sequence
   }
 
