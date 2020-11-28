@@ -9,6 +9,8 @@ The Sunrise Alarm Clock project is designed to create a mood-lighting solution t
 5. Make a copy of config-template.h in the Sunrise folder, rename to just 'config.h', and define the values (i.e wifi password, wake time, etc)
 6. Upload Sunrise\Sunrise.ino to the board
 
+When a flashed board receives power, it wil flash a dim all-white until the wifi connects (usually 4-5 seconds). If this doesn't stop check the wifi config values.
+
 # Hardware
 This project uses Ben's custom-designed LED board, which is a single board combining the open-source, Arduino IDE compatible NODEMCU ESP8266 microcontroller with a neopixelbus-compatible array of RGB LEDs
 

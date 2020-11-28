@@ -92,19 +92,25 @@ void setup() {
     Serial.println("Initializing...");
     Serial.flush();
 
+// set board; resets all the neopixels to an off state 
+    strip.Begin();
+    strip.Show();
+
+
 //set up wifi and NTP
     WiFi.begin(ssid, password);
 
     while ( WiFi.status() != WL_CONNECTED ) { 
-      delay ( 500 );
+      updateBoard(RgbColor(10,10,10));
+      delay ( 250 );
       Serial.print ( "." );
+      updateBoard(RgbColor(0,0,0));
+      delay (250);
     }
+    updateBoard(RgbColor(0,0,0));
     timeClient.begin();
     timeClient.update();
     
-// set board; resets all the neopixels to an off state 
-    strip.Begin();
-    strip.Show();
 
     Serial.println();
     Serial.println("Running...");
