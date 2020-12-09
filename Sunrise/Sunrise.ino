@@ -101,10 +101,10 @@ void setup() {
     WiFi.begin(ssid, password);
 
     while ( WiFi.status() != WL_CONNECTED ) { 
-      updateBoard(RgbColor(10,10,10));
+      strip.SetPixelColor(1,RgbColor(10,10,10)); //indicator LED to confirm power and Wifi connection
       delay ( 250 );
       Serial.print ( "." );
-      updateBoard(RgbColor(0,0,0));
+      strip.SetPixelColor(1,RgbColor(0,0,0));
       delay (250);
     }
     updateBoard(RgbColor(0,0,0));
