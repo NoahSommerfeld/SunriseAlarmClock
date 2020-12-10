@@ -37,15 +37,16 @@ struct KeyFrame
 long startedTime =0; //the UNIX timestamp at which the sequence began (i.e sunrise)
 
 //The following array represents the sunrise sequence
-const int numOfSunriseKeyFrames = 7;
+const int numOfSunriseKeyFrames = 8;
 struct KeyFrame sunriseArray[numOfSunriseKeyFrames]={
   {RgbColor(0,0,0),0}, //start black
-  {RgbColor(15,0,10),100}, //fade up to dark red over a minute
-  {RgbColor(45,40,0),900},// dark orange
-  {RgbColor(90,65,1), 1800}, //strong orange
-  {RgbColor(150,90,1),2700},//move towards yellow
-  {RgbColor(255,200,100),3600}, //full bright (with yellow tinge)
-  {RgbColor(30,30,10),4500}, //fade out
+  {RgbColor(5,0,0),100}, //fade up to dark red over a minute
+  {RgbColor(45,10,0),900},// dark orange
+  {RgbColor(98,30,1),1800}, //strong orange
+  {RgbColor(150,45,5),2700},//move towards yellow
+  {RgbColor(225,100,25),3600}, //full bright (with yellow tinge)
+  {RgbColor(225,100,25),4500}, //hold full bright
+  {RgbColor(30,30,10),4700}, //fade out
 };
 // 1 hr is 3,600 seconds, and 900 seconds is 15 minutes. 
 
@@ -99,12 +100,14 @@ void setup() {
 
 //set up wifi and NTP
     WiFi.begin(ssid, password);
-
+    updateBoard(RgbColor(0,0,0));
     while ( WiFi.status() != WL_CONNECTED ) { 
-      strip.SetPixelColor(1,RgbColor(10,10,10)); //indicator LED to confirm power and Wifi connection
+      strip.SetPixelColor(5,RgbColor(10,10,10)); //indicator LED to confirm power and Wifi connection
+      strip.Show();
       delay ( 250 );
       Serial.print ( "." );
-      strip.SetPixelColor(1,RgbColor(0,0,0));
+      strip.SetPixelColor(5,RgbColor(0,0,0));
+      strip.Show();
       delay (250);
     }
     updateBoard(RgbColor(0,0,0));
@@ -140,6 +143,8 @@ void loop() {
   //Set the 'started time' to current time (which resets the elapsed time to 0 and starts the sequence)
   if(String(hour()).equals(CONFIG_SUNRISE_START_HOUR) && String(minute()).equals(CONFIG_SUNRISE_START_MINUTE)){
     startedTime = timeClient.getEpochTime(); //start the sunrise sequence
+    Serial.println("starting");
+    delay(1000);
   }
 
   // THIS IS THE KEY LINE - for each iteration, set the board to be the next color in the sequence (determined by elapsed time since StartedTime)
