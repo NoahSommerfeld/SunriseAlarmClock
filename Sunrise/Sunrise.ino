@@ -50,16 +50,19 @@ struct KeyFrame sunriseArray[numOfSunriseKeyFrames]={
 };
 // 1 hr is 3,600 seconds, and 900 seconds is 15 minutes, 600 is 10. 
 
-const int numOfSunsetKeyFrames = 8;
+//sunset sequence, inverse of sunrise and a longer hold period at the beginning
+//frames at 10 min apart after an hour.
+const int numOfSunsetKeyFrames = 9;
 struct KeyFrame sunsetArray[numOfSunsetKeyFrames]={
   {RgbColor(0,0,0),0}, //start black
-  {RgbColor(5,0,0),100}, //fade up to dark red over a minute
-  {RgbColor(45,10,0),600},// dark orange
-  {RgbColor(98,30,1),1200}, //strong orange
-  {RgbColor(150,45,5),1800},//move towards yellow
-  {RgbColor(225,100,25),2400}, //full bright (with yellow tinge)
-  {RgbColor(225,100,25),4500}, //hold full bright for a while
-  {RgbColor(30,30,10),4700}, //fade out
+  {RgbColor(0,0,0),1}, //stay black (stops early color, even at 0 there was a little given the gradient)
+  {RgbColor(225,100,25),10}, //fade up to full bright (with yellow tinge)
+  {RgbColor(225,100,25),360}, //hold full bright until 1 hr
+  {RgbColor(150,45,5),420},//move towards normal yellow
+  {RgbColor(98,30,1),480}, //strong orange
+  {RgbColor(45,10,0),540},// dark orange
+  {RgbColor(20,0,0),600}, //fade to dim red
+  {RgbColor(0,0,0),660}, //slow final fade out
 };
 
 
