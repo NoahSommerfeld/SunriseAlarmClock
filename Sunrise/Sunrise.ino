@@ -50,6 +50,17 @@ struct KeyFrame sunriseArray[numOfSunriseKeyFrames]={
 };
 // 1 hr is 3,600 seconds, and 900 seconds is 15 minutes, 600 is 10. 
 
+const int numOfSunsetKeyFrames = 8;
+struct KeyFrame sunsetArray[numOfSunsetKeyFrames]={
+  {RgbColor(0,0,0),0}, //start black
+  {RgbColor(5,0,0),100}, //fade up to dark red over a minute
+  {RgbColor(45,10,0),600},// dark orange
+  {RgbColor(98,30,1),1200}, //strong orange
+  {RgbColor(150,45,5),1800},//move towards yellow
+  {RgbColor(225,100,25),2400}, //full bright (with yellow tinge)
+  {RgbColor(225,100,25),4500}, //hold full bright for a while
+  {RgbColor(30,30,10),4700}, //fade out
+};
 
 
 //**************METHODS ***********************
@@ -64,7 +75,7 @@ void updateBoard(RgbColor colorToSet){
 }
 
 //Returns the calculated color to display, given the target array and elapsed time (linear progression)
-RgbColor pickColorToSet(KeyFrame frameArray[], long elapsedTime){
+RgbColor pickColorToSet(KeyFrame frameArray[],int arraySize, long elapsedTime){
   if(elapsedTime<1){
     elapsedTime = 1; //to stop divide-by-zero errors
   }
@@ -72,7 +83,7 @@ RgbColor pickColorToSet(KeyFrame frameArray[], long elapsedTime){
     return RgbColor::LinearBlend(RgbColor(0,0,0), frameArray[0].color, float(frameArray[0].targetTime/(float)elapsedTime)); //fade in first frame from black (off)
   }
   
-  for(int i=1; i<numOfSunriseKeyFrames; i++){
+  for(int i=1; i<arraySize; i++){
    if(elapsedTime<frameArray[i].targetTime){
     long millisSinceLastFrameSwitch = elapsedTime - frameArray[i-1].targetTime;
     long elapsedTimeBetweenFrames = frameArray[i].targetTime-frameArray[i-1].targetTime;
@@ -140,13 +151,30 @@ void loop() {
      setTime(timeClient.getEpochTime());
   }
 
+
+  boolean isSunrise = false;
+
+  //start trigger for sunrise
   //Set the 'started time' to current time (which resets the elapsed time to 0 and starts the sequence)
   if(String(hour()).equals(CONFIG_SUNRISE_START_HOUR) && String(minute()).equals(CONFIG_SUNRISE_START_MINUTE)){
-    startedTime = timeClient.getEpochTime(); //start the sunrise sequence
-    Serial.println("starting");
+    startedTime = timeClient.getEpochTime(); //reset the time mark
+    isSunrise = true;
+    Serial.println("starting sunrise");
     delay(1000);
   }
-
+  //start trigger for sunset
+  //Set the 'started time' to current time (which resets the elapsed time to 0 and starts the sequence)
+  if(String(hour()).equals(CONFIG_SUNSET_START_HOUR) && String(minute()).equals(CONFIG_SUNSET_START_MINUTE)){
+    startedTime = timeClient.getEpochTime(); //reset the time mark
+    isSunrise = false;
+    Serial.println("starting sunset");
+    delay(1000);
+  }
   // THIS IS THE KEY LINE - for each iteration, set the board to be the next color in the sequence (determined by elapsed time since StartedTime)
-  updateBoard(pickColorToSet(sunriseArray,(timeClient.getEpochTime()-startedTime)));
+  if(isSunrise){
+    updateBoard(pickColorToSet(sunriseArray,numOfSunriseKeyFrames, (timeClient.getEpochTime()-startedTime)));
+  }
+  else{
+    updateBoard(pickColorToSet(sunsetArray,numOfSunsetKeyFrames, (timeClient.getEpochTime()-startedTime)));
+  }
 }
