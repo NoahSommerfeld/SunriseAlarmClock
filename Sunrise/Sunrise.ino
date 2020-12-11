@@ -56,13 +56,13 @@ const int numOfSunsetKeyFrames = 9;
 struct KeyFrame sunsetArray[numOfSunsetKeyFrames]={
   {RgbColor(0,0,0),0}, //start black
   {RgbColor(0,0,0),1}, //stay black (stops early color, even at 0 there was a little given the gradient)
-  {RgbColor(225,100,25),10}, //fade up to full bright (with yellow tinge)
-  {RgbColor(225,100,25),360}, //hold full bright until 1 hr
-  {RgbColor(150,45,5),420},//move towards normal yellow
-  {RgbColor(98,30,1),480}, //strong orange
-  {RgbColor(45,10,0),540},// dark orange
-  {RgbColor(20,0,0),600}, //fade to dim red
-  {RgbColor(0,0,0),660}, //slow final fade out
+  {RgbColor(225,100,25),100}, //fade up to full bright (with yellow tinge)
+  {RgbColor(225,100,25),3600}, //hold full bright until 1 hr
+  {RgbColor(150,45,5),4200},//move towards normal yellow
+  {RgbColor(98,30,1),4800}, //strong orange
+  {RgbColor(45,10,0),5400},// dark orange
+  {RgbColor(20,0,0),6000}, //fade to dim red
+  {RgbColor(0,0,0),6600}, //slow final fade out
 };
 
 
