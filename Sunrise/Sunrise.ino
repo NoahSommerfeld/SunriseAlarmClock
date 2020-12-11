@@ -41,14 +41,14 @@ const int numOfSunriseKeyFrames = 8;
 struct KeyFrame sunriseArray[numOfSunriseKeyFrames]={
   {RgbColor(0,0,0),0}, //start black
   {RgbColor(5,0,0),100}, //fade up to dark red over a minute
-  {RgbColor(45,10,0),900},// dark orange
-  {RgbColor(98,30,1),1800}, //strong orange
-  {RgbColor(150,45,5),2700},//move towards yellow
-  {RgbColor(225,100,25),3600}, //full bright (with yellow tinge)
-  {RgbColor(225,100,25),4500}, //hold full bright
+  {RgbColor(45,10,0),600},// dark orange
+  {RgbColor(98,30,1),1200}, //strong orange
+  {RgbColor(150,45,5),1800},//move towards yellow
+  {RgbColor(225,100,25),2400}, //full bright (with yellow tinge)
+  {RgbColor(225,100,25),4500}, //hold full bright for a while
   {RgbColor(30,30,10),4700}, //fade out
 };
-// 1 hr is 3,600 seconds, and 900 seconds is 15 minutes. 
+// 1 hr is 3,600 seconds, and 900 seconds is 15 minutes, 600 is 10. 
 
 
 
