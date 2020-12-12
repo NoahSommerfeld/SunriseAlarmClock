@@ -6,10 +6,10 @@ The Sunrise Alarm Clock project is designed to create a mood-lighting solution t
 2. In the Arduino IDE, add in the NODEMCU ESP8266 board as a compatible board https://www.instructables.com/Steps-to-Setup-Arduino-IDE-for-NODEMCU-ESP8266-WiF/
 3. Add in the depedency libraries (neopixelbus, NTPclient) library via Arduino library manager
 4. Clone the repository and open in Arduino IDE
-5. Make a copy of config-template.h in the Sunrise folder, rename to just 'config.h', and define the values (i.e wifi password, wake time, etc)
+5. Make a copy of config-template.h in the Sunrise folder, rename to just 'config.h', and define the values (i.e wifi password, start times, etc)
 6. Upload Sunrise\Sunrise.ino to the board
 
-When a flashed board receives power, it wil flash a dim all-white until the wifi connects (usually 4-5 seconds). If this doesn't stop check the wifi config values.
+When a flashed board receives power, it wil flash a single LED a dim white until the wifi connects (usually 4-5 seconds). If this doesn't stop check the wifi config values.
 
 # Hardware
 This project uses Ben's custom-designed LED board, which is a single board combining the open-source, Arduino IDE compatible NODEMCU ESP8266 microcontroller with a neopixelbus-compatible array of RGB LEDs

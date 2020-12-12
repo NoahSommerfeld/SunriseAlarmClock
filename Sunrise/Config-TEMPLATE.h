@@ -5,4 +5,4 @@
 #define CONFIG_SUNRISE_START_MINUTE "50" //minute to start. This starts the sunrise at 5:50am. 
 
 #define CONFIG_SUNSET_START_HOUR "17" //hour to start. 24 hr clock, don't use leading 0's. 
-#define CONFIG_SUNSET_START_MINUTE "01" //starts the sunrise at 5:01pm. 
+#define CONFIG_SUNSET_START_MINUTE "01" //starts the sunset at 5:01pm. 
