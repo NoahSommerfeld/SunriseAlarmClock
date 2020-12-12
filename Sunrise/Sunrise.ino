@@ -144,6 +144,16 @@ void setup() {
 
 void loop() {
 
+boolean isWeekend = false;
+boolean isSunrise = false;
+  
+  if(weekday() == 1 || weekday() == 7){ //if the day is Sunday (1) or Saturday (7)
+    isWeekend = true;
+  }
+  else{
+    isWeekend = false;
+  }
+
  //sync time twice a day. Could add an error indicator (make board go full red?)
   if(String(hour()).equals("5") && String(minute()).equals("30")){
      timeClient.update(); //uses cache time specified in constructor so won't hammer. 
@@ -155,22 +165,28 @@ void loop() {
   }
 
 
-  boolean isSunrise = false;
+//************** trigers for the sequences ***********************
+//Set the 'started time' to current time (which resets the elapsed time to 0 and starts the sequence)
 
-  //start trigger for sunrise
-  //Set the 'started time' to current time (which resets the elapsed time to 0 and starts the sequence)
-  if(String(hour()).equals(CONFIG_SUNRISE_START_HOUR) && String(minute()).equals(CONFIG_SUNRISE_START_MINUTE)){
+
+//weekday sunrise
+  if(!isWeekend && String(hour()).equals(CONFIG_SUNRISE_WEEKDAY_START_HOUR) && String(minute()).equals(CONFIG_SUNRISE_WEEKDAY_START_MINUTE)){
     startedTime = timeClient.getEpochTime(); //reset the time mark
     isSunrise = true;
-    Serial.println("starting sunrise");
     delay(1000);
   }
-  //start trigger for sunset
-  //Set the 'started time' to current time (which resets the elapsed time to 0 and starts the sequence)
+
+//weekend sunrise
+  if(isWeekend && String(hour()).equals(CONFIG_SUNRISE_WEEKEND_START_HOUR) && String(minute()).equals(CONFIG_SUNRISE_WEEKEND_START_MINUTE)){
+    startedTime = timeClient.getEpochTime(); //reset the time mark
+    isSunrise = true;
+    delay(1000);
+  }
+
+//sunset (same time every day)
   if(String(hour()).equals(CONFIG_SUNSET_START_HOUR) && String(minute()).equals(CONFIG_SUNSET_START_MINUTE)){
     startedTime = timeClient.getEpochTime(); //reset the time mark
     isSunrise = false;
-    Serial.println("starting sunset");
     delay(1000);
   }
   // THIS IS THE KEY LINE - for each iteration, set the board to be the next color in the sequence (determined by elapsed time since StartedTime)
