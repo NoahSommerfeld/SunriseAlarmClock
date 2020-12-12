@@ -140,12 +140,10 @@ void setup() {
     Serial.println("time lib: "+String(hour())+" "+String(minute())+" "+String(second()));
 }
 
-
-
-void loop() {
-
 boolean isWeekend = false;
 boolean isSunrise = false;
+
+void loop() {
   
   if(weekday() == 1 || weekday() == 7){ //if the day is Sunday (1) or Saturday (7)
     isWeekend = true;
