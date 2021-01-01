@@ -113,6 +113,8 @@ void setup() {
 
 
 //set up wifi and NTP
+    WiFi.disconnect();
+    WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
     updateBoard(RgbColor(0,0,0));
     while ( WiFi.status() != WL_CONNECTED ) { 
